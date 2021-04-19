@@ -13,35 +13,37 @@ public class Client {
     private static BufferedWriter writer;
     private static BufferedReader reader;
     private static BufferedReader readerSystem;
+    private static ObjectOutputStream outObject;
 
     public static void main(String[] args) throws IOException {
         clientSocket = new Socket("127.0.0.1", 4719);
         writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        outObject = new ObjectOutputStream(clientSocket.getOutputStream());
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
         Client client = new Client();
         client.go();
     }
 
     public void go() throws IOException {
-        Account account = createAccount();
-        //сериализовать account и отправить его на сервер
-        ObjectOutputStream serializable = new ObjectOutputStream(new FileOutputStream("person.dat"));
-        serializable.writeObject(account);
-
         writer.write("Get me some information");
         writer.newLine();
         writer.flush();
-        String message;
+
+        Account account = createAccount();
+
+        outObject.writeObject(account);
+        writer.flush();
+
         String response = reader.readLine();
         System.out.println(response);
+        String message;
         while (reader.ready()) {
             message = reader.readLine();
             System.out.println(message);
         }
-        writer.close();
-        reader.close();
-        clientSocket.close();
+
+        close();
     }
 
     public Account createAccount() throws IOException {
@@ -51,6 +53,14 @@ public class Client {
         String password = readerSystem.readLine();
         Account account = new Account(name, password);
         return account;
+    }
+
+    private void close() throws IOException {
+        clientSocket.close();
+        writer.close();
+        reader.close();
+        readerSystem.close();
+        outObject.close();
     }
 }
 

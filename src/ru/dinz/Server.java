@@ -5,16 +5,29 @@ import java.net.*;
 import java.util.*;
 
 public class Server {
+
+    private static Socket clientSocket;
+    private static ServerSocket serverSocket;
+    private static BufferedWriter writer;
+    private static BufferedReader reader;
+    private static ObjectInputStream inObject;
+
     public static void main(String[] args) throws IOException {
+        serverSocket = new ServerSocket(4719);
+        new Server().go(serverSocket);
+    }
+
+    public void go(ServerSocket serverSocket) throws IOException {
         int count = 0;
-        ServerSocket serverSocket = new ServerSocket(4719);
         while (true) {
-            Socket clientSocket = serverSocket.accept();
+            clientSocket = serverSocket.accept();
+            inObject = new ObjectInputStream(clientSocket.getInputStream());
             System.out.println(((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress());
             System.out.println(clientSocket.getRemoteSocketAddress().toString().split(":")[0]);
             System.out.println("Accepted");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String request = reader.readLine();
             String response = "#" + count + ", Your message length is " + request.length();
             writer.write(response);
@@ -24,10 +37,16 @@ public class Server {
                     + "\r\n"
                     + "<h1>Java " + count++ + "</h1>\r\n");
             writer.flush();
-            writer.close();
-            reader.close();
-            clientSocket.close();
+
+            close();
         }
+    }
+
+    private void close() throws IOException {
+        clientSocket.close();
+        writer.close();
+        reader.close();
+        inObject.close();
         //serverSocket.close();
     }
 }
