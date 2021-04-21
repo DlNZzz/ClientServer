@@ -6,6 +6,7 @@ import java.util.*;
 
 public class Server {
 
+    public static final int PORT = 4719;
     private static Socket clientSocket;
     private static ServerSocket serverSocket;
     private static BufferedWriter writer;
@@ -13,7 +14,7 @@ public class Server {
     private static ObjectInputStream inObject;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        serverSocket = new ServerSocket(4719);
+        serverSocket = new ServerSocket(PORT);
         new Server().go(serverSocket);
     }
 
