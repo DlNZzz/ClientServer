@@ -12,38 +12,40 @@ public class Server {
     private static BufferedReader reader;
     private static ObjectInputStream inObject;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         serverSocket = new ServerSocket(4719);
         new Server().go(serverSocket);
     }
 
-    public void go(ServerSocket serverSocket) throws IOException {
+    public void go(ServerSocket serverSocket) throws IOException, ClassNotFoundException, InterruptedException {
         int count = 0;
         while (true) {
             clientSocket = serverSocket.accept();
             inObject = new ObjectInputStream(clientSocket.getInputStream());
-            System.out.println(((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress());
-            System.out.println(clientSocket.getRemoteSocketAddress().toString().split(":")[0]);
+            System.out.println("IP is: " + ((InetSocketAddress)
+                    clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
+            System.out.println("PORT is: " + clientSocket.getRemoteSocketAddress().toString().split(":")[1]);
             System.out.println("Accepted");
-
             writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
             String request = reader.readLine();
-            String response = "#" + count + ", Your message length is " + request.length();
+            String response = "#" + ++count + ", Your message is " + request;
             writer.write(response);
             writer.newLine();
-            writer.write("HTTP/1.0 200 OK\r\n"
-                    + "Content-type: text/html\r\n"
-                    + "\r\n"
-                    + "<h1>Java " + count++ + "</h1>\r\n");
             writer.flush();
 
+            Account account = (Account) inObject.readObject();
+            System.out.println(account);
+
+            writer.write(account.getName() + " connection!");
+            writer.newLine();
             close();
         }
     }
 
     private void close() throws IOException {
-        clientSocket.close();
+        //clientSocket.close();
         writer.close();
         reader.close();
         inObject.close();

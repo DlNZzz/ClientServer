@@ -3,6 +3,9 @@ package ru.dinz;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Здесь все понятно
+ */
 public class Account implements Serializable {
     private String name;
     private String password;
@@ -37,5 +40,13 @@ public class Account implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(name, password);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

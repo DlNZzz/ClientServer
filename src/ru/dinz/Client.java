@@ -29,23 +29,29 @@ public class Client {
         writer.write("Get me some information");
         writer.newLine();
         writer.flush();
+        String request = reader.readLine();
+        System.out.println(request);
 
         Account account = createAccount();
-
         outObject.writeObject(account);
         writer.flush();
 
-        String response = reader.readLine();
-        System.out.println(response);
-        String message;
+        String message = reader.readLine();
+        System.out.println(message);
+        /*
         while (reader.ready()) {
             message = reader.readLine();
             System.out.println(message);
         }
-
+        */
         close();
     }
 
+    /**
+     * Create new Account
+     * @return Account
+     * @throws IOException
+     */
     public Account createAccount() throws IOException {
         System.out.print("Client start!\nEnter name: ");
         String name = readerSystem.readLine();
@@ -55,6 +61,10 @@ public class Client {
         return account;
     }
 
+    /**
+     * Closes streams
+     * @throws IOException
+     */
     private void close() throws IOException {
         clientSocket.close();
         writer.close();
