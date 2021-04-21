@@ -16,14 +16,18 @@ public class Server {
      * список всех нитей - экземпляров
      */
     public static List<ServerSomthing> serverList = new ArrayList<>();
+    public static Story story;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+        System.out.println("Server Started");
         serverSocket = new ServerSocket(PORT);
+        story = new Story();
         new Server().go(serverSocket);
     }
 
     public void go(ServerSocket serverSocket) throws IOException, ClassNotFoundException, InterruptedException {
         int count = 0;
+        /*
         while (true) {
             clientSocket = serverSocket.accept();
             inObject = new ObjectInputStream(clientSocket.getInputStream());
@@ -45,6 +49,26 @@ public class Server {
 
             writer.write(account.getName() + " connection!");
             writer.newLine();
+            close();
+        }
+        */
+        try {
+            while (true) {
+                // Блокируется до возникновения нового соединения:
+
+                clientSocket = serverSocket.accept();
+                System.out.println("IP is: " + ((InetSocketAddress)
+                        clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
+                System.out.println("PORT is: " + clientSocket.getRemoteSocketAddress().toString().split(":")[1]);
+                try {
+                    serverList.add(new ServerSomthing(clientSocket)); // добавить новое соединенние в список
+                } catch (IOException e) {
+                    // Если завершится неудачей, закрывается сокет,
+                    // в противном случае, нить закроет его:
+                    clientSocket.close();
+                }
+            }
+        } finally {
             close();
         }
     }
