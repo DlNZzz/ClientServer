@@ -12,6 +12,10 @@ public class Server {
     private static BufferedWriter writer;
     private static BufferedReader reader;
     private static ObjectInputStream inObject;
+    /**
+     * список всех нитей - экземпляров
+     */
+    public static List<ServerSomthing> serverList = new ArrayList<>();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         serverSocket = new ServerSocket(PORT);

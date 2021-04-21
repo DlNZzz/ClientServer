@@ -6,14 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 class Story {
-
+    /**
+     * Список сообщений
+     */
     private List<String> story = new LinkedList<>();
 
     /**
      * добавить новый элемент в список
      * @param el
      */
-
     public void addStoryEl(String el) {
         story.add(el);
     }
@@ -23,7 +24,6 @@ class Story {
      * в поток вывода данному клиенту (новому подключению)
      * @param writer
      */
-
     public void printStory(BufferedWriter writer) {
         if(story.size() > 0) {
             try {
