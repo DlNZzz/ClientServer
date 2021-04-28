@@ -15,7 +15,7 @@ public class Server {
     /**
      * список всех нитей - экземпляров
      */
-    public static List<ServerSomthing> serverList = new ArrayList<>();
+    public static List<ServerSomething> serverList = new ArrayList<>();
     public static Story story;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
@@ -29,12 +29,7 @@ public class Server {
         int count = 0;
         /*
         while (true) {
-            clientSocket = serverSocket.accept();
-            inObject = new ObjectInputStream(clientSocket.getInputStream());
-            System.out.println("IP is: " + ((InetSocketAddress)
-                    clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
-            System.out.println("PORT is: " + clientSocket.getRemoteSocketAddress().toString().split(":")[1]);
-            System.out.println("Accepted");
+
             writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
@@ -55,13 +50,12 @@ public class Server {
         try {
             while (true) {
                 // Блокируется до возникновения нового соединения:
-
                 clientSocket = serverSocket.accept();
-                System.out.println("IP is: " + ((InetSocketAddress)
-                        clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
+                System.out.println("Accepted");
+                System.out.println("IP is: " + ((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
                 System.out.println("PORT is: " + clientSocket.getRemoteSocketAddress().toString().split(":")[1]);
                 try {
-                    serverList.add(new ServerSomthing(clientSocket)); // добавить новое соединенние в список
+                    serverList.add(new ServerSomething(clientSocket)); // добавить новое соединенние в список
                 } catch (IOException e) {
                     // Если завершится неудачей, закрывается сокет,
                     // в противном случае, нить закроет его:

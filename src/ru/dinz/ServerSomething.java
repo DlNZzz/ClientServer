@@ -2,14 +2,12 @@ package ru.dinz;
 
 import java.io.*;
 import java.net.*;
-import java.util.LinkedList;
 
-class ServerSomthing extends Thread {
+class ServerSomething extends Thread {
 
-    private Socket socket; // сокет, через который сервер общается с клиентом,
-    // кроме него - клиент и сервер никак не связаны
+    private Socket socket; // сокет, через который сервер общается с клиентом
     private BufferedReader in; // поток чтения из сокета
-    private BufferedWriter out; // поток завписи в сокет
+    private BufferedWriter out; // поток записи в сокет
 
     /**
      * для общения с клиентом необходим сокет (адресные данные)
@@ -17,7 +15,7 @@ class ServerSomthing extends Thread {
      * @throws IOException
      */
 
-    public ServerSomthing(Socket socket) throws IOException {
+    public ServerSomething(Socket socket) throws IOException {
         this.socket = socket;
         // если потоку ввода/вывода приведут к генерированию искдючения, оно проброситься дальше
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -35,10 +33,13 @@ class ServerSomthing extends Thread {
             try {
                 out.write(word + "\n");
                 out.flush(); // flush() нужен для выталкивания оставшихся данных
-                // если такие есть, и очистки потока для дьнейших нужд
+                // если такие есть, и очистки потока для дальнейших нужд
             } catch (IOException ignored) {}
             try {
                 while (true) {
+                    //!!!
+                    //Поставить условие проверки очередии
+
                     word = in.readLine();
                     if(word.equals("stop")) {
                         this.downService(); // харакири
@@ -46,7 +47,7 @@ class ServerSomthing extends Thread {
                     }
                     System.out.println("Echoing: " + word);
                     Server.story.addStoryEl(word);
-                    for (ServerSomthing vr : Server.serverList) {
+                    for (ServerSomething vr : Server.serverList) {
                         vr.send(word); // отослать принятое сообщение с привязанного клиента всем остальным влючая его
                     }
                 }
@@ -80,7 +81,7 @@ class ServerSomthing extends Thread {
                 socket.close();
                 in.close();
                 out.close();
-                for (ServerSomthing vr : Server.serverList) {
+                for (ServerSomething vr : Server.serverList) {
                     if(vr.equals(this)) vr.interrupt();
                     Server.serverList.remove(this);
                 }
