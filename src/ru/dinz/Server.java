@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Server {
 
-    public static final int PORT = 4719;
+    public static final int PORT = 4720;
     private static Socket clientSocket;
     private static ServerSocket serverSocket;
     private static BufferedWriter writer;

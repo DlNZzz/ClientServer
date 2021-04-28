@@ -7,7 +7,8 @@ class ServerSomething extends Thread {
 
     private Socket socket; // сокет, через который сервер общается с клиентом
     private BufferedReader in; // поток чтения из сокета
-    private BufferedWriter out; // поток записи в сокет
+    private BufferedWriter writer; // поток записи в сокет
+    private ObjectInputStream inObject;
 
     /**
      * для общения с клиентом необходим сокет (адресные данные)
@@ -19,8 +20,9 @@ class ServerSomething extends Thread {
         this.socket = socket;
         // если потоку ввода/вывода приведут к генерированию искдючения, оно проброситься дальше
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        Server.story.printStory(out); // поток вывода передаётся для передачи истории последних 10
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        inObject = new ObjectInputStream(socket.getInputStream());
+        Server.story.printStory(writer); // поток вывода передаётся для передачи истории последних 10
         // сооюбщений новому поключению
         start(); // вызываем run()
     }
@@ -29,12 +31,18 @@ class ServerSomething extends Thread {
         String word;
         try {
             // первое сообщение отправленное сюда - это никнейм
-            word = in.readLine();
-            try {
-                out.write(word + "\n");
-                out.flush(); // flush() нужен для выталкивания оставшихся данных
+            //word = in.readLine();
+
+            Account account = (Account) inObject.readObject();
+            System.out.println(account);
+            writer.write(account.getName() + " connection!");
+            writer.newLine();
+            writer.flush();
+            //try {
+                //writer.write(word + "\n");
+                //writer.flush(); // flush() нужен для выталкивания оставшихся данных
                 // если такие есть, и очистки потока для дальнейших нужд
-            } catch (IOException ignored) {}
+            //} catch (IOException ignored) {}
             try {
                 while (true) {
                     //!!!
@@ -54,7 +62,7 @@ class ServerSomething extends Thread {
             } catch (NullPointerException ignored) {}
 
 
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             this.downService();
         }
     }
@@ -65,8 +73,8 @@ class ServerSomething extends Thread {
      */
     private void send(String msg) {
         try {
-            out.write(msg + "\n");
-            out.flush();
+            writer.write(msg + "\n");
+            writer.flush();
         } catch (IOException ignored) {}
 
     }
@@ -80,7 +88,7 @@ class ServerSomething extends Thread {
             if(!socket.isClosed()) {
                 socket.close();
                 in.close();
-                out.close();
+                writer.close();
                 for (ServerSomething vr : Server.serverList) {
                     if(vr.equals(this)) vr.interrupt();
                     Server.serverList.remove(this);

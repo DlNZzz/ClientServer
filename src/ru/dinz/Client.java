@@ -16,7 +16,7 @@ public class Client {
     private static ObjectOutputStream outObject;
 
     public static void main(String[] args) throws IOException {
-        clientSocket = new Socket("127.0.0.1", 4719);
+        clientSocket = new Socket("127.0.0.1", 4720);
         writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outObject = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -26,14 +26,9 @@ public class Client {
     }
 
     public void go() throws IOException {
-        writer.write("Get me some information");
-        writer.newLine();
-        writer.flush();
-        String request = reader.readLine();
-        System.out.println(request);
-
         Account account = createAccount();
         outObject.writeObject(account);
+        outObject.flush();
         writer.flush();
 
         String message = reader.readLine();
@@ -43,6 +38,13 @@ public class Client {
             message = reader.readLine();
             System.out.println(message);
         }
+
+        String request = reader.readLine();
+        System.out.println(request);
+
+        writer.write("Get me some information");
+        writer.newLine();
+        writer.flush();
         */
         close();
     }
