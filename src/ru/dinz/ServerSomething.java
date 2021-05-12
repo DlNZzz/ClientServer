@@ -35,6 +35,7 @@ class ServerSomething extends Thread {
 
             Account account = (Account) inObject.readObject();
             System.out.println(account);
+            Queue.add(new Token(account));
             writer.write(account.getName() + " connection!");
             writer.newLine();
             writer.flush();

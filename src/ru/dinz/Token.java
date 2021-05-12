@@ -37,7 +37,7 @@ public class Token implements Comparable<Token> {
     @Override
     public int compareTo(Token o) {
         Map<Token, Integer> mapDataBase = Queue.getMap();
-        int priority1 = -1, priority2 = -1;
+        int priority1 = 999, priority2 = 999;
         if (mapDataBase.containsKey(this)) {
             priority1 = mapDataBase.get(this);
         }
@@ -47,3 +47,21 @@ public class Token implements Comparable<Token> {
         return priority1 - priority2;
     }
 }
+
+/*
+@Override
+    public int compareTo(Token o) {
+        Map<Token, Integer> mapDataBase = Queue.getMap();
+        int priority1 = -1, priority2 = -1;
+        if (mapDataBase.containsKey(this)) {
+            mapDataBase.get(this);
+        }
+        for (Map.Entry<Token, Integer> entry : mapDataBase.entrySet()) {
+            Token token = entry.getKey();
+            if (token.equals(o)) {
+                priority2 = entry.getValue();
+            }
+        }
+        return priority2 - priority1;
+    }
+ */

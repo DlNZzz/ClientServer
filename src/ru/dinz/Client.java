@@ -16,7 +16,7 @@ public class Client {
     private static ObjectOutputStream outObject;
 
     public static void main(String[] args) throws IOException {
-        clientSocket = new Socket("127.0.0.1", 4720);
+        clientSocket = new Socket("127.0.0.1", 4721);
         writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outObject = new ObjectOutputStream(clientSocket.getOutputStream());

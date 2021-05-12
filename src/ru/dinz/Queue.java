@@ -1,7 +1,6 @@
 package ru.dinz;
 
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class Queue {
@@ -11,10 +10,36 @@ public class Queue {
             new Token(new Account("13", "1")), 3,
             new Token(new Account("133", "1")), 12
     );
-    //private static PriorityBlockingQueue priorityBlockingQueue = new PriorityBlockingQueue();
-    private static PriorityBlockingQueue<Token> priorityQueue;
+    private static PriorityBlockingQueue<Token> priorityQueue = new PriorityBlockingQueue<>();
 
-    public static void main(String[] args) {
+    public static Map<Token, Integer> getMap() {
+        System.out.println(mapDataBase);
+        return mapDataBase;
+    }
+
+    public static PriorityBlockingQueue<Token> getPriorityQueue() {
+        return priorityQueue;
+    }
+
+    public static void add(Token token) {
+        priorityQueue.add(token);
+    }
+
+    public static Token peek(Token token) {
+        return priorityQueue.peek();
+    }
+
+    public static Token poll(Token token) {
+        return priorityQueue.poll();
+    }
+
+    public static void delete(Token token) {
+        priorityQueue.remove(token);
+    }
+}
+
+/*
+public static void main(String[] args) {
         priorityQueue = new PriorityBlockingQueue<>();
         priorityQueue.add(new Token(new Account("1", "1")));
         priorityQueue.add(new Token(new Account("111", "1")));
@@ -30,41 +55,5 @@ public class Queue {
             System.out.println(mapDataBase.get(priorityQueue.poll()));
         }
         //priorityQueue.peek();
-    }
-
-    public static Map<Token, Integer> getMap() {
-        return mapDataBase;
-    }
-}
-/*
-@Override
-    public int compareTo(Token o) {
-        Map<Token, Integer> mapDataBase = Queue.getMap();
-        int priority1 = -1, priority2 = -1;
-        if (mapDataBase.containsKey(this)) {
-            priority1 = mapDataBase.get(this);
-        }
-        if (mapDataBase.containsKey(o)) {
-            priority2 = mapDataBase.get(o);
-        }
-        return priority1 - priority2;
-    }
- */
-
-/*
-@Override
-    public int compareTo(Token o) {
-        Map<Token, Integer> mapDataBase = Queue.getMap();
-        int priority1 = -1, priority2 = -1;
-        if (mapDataBase.containsKey(this)) {
-            mapDataBase.get(this);
-        }
-        for (Map.Entry<Token, Integer> entry : mapDataBase.entrySet()) {
-            Token token = entry.getKey();
-            if (token.equals(o)) {
-                priority2 = entry.getValue();
-            }
-        }
-        return priority2 - priority1;
     }
  */
