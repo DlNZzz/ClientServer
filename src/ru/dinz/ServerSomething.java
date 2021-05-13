@@ -9,6 +9,7 @@ class ServerSomething extends Thread {
     private BufferedReader in; // поток чтения из сокета
     private BufferedWriter writer; // поток записи в сокет
     private ObjectInputStream inObject;
+    private static BufferedReader reader;
     private static ObjectOutputStream outObject;
     private static BufferedReader readerSystem;
 
@@ -23,10 +24,11 @@ class ServerSomething extends Thread {
         // если потоку ввода/вывода приведут к генерированию искдючения, оно проброситься дальше
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         inObject = new ObjectInputStream(socket.getInputStream());
         outObject = new ObjectOutputStream(socket.getOutputStream());
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
-        Server.story.printStory(writer); // поток вывода передаётся для передачи истории последних 10
+        //Server.story.printStory(writer); // поток вывода передаётся для передачи истории последних 10
         // сооюбщений новому поключению
         start(); // вызываем run()
     }
@@ -56,6 +58,7 @@ class ServerSomething extends Thread {
                 while (true) {
                     //!!!
                     //Поставить условие проверки очередии
+                    // поставил
                     boolean isEmpty = false;
                     if (Queue.getPriorityQueue().peek().equals(token)) {
                         isEmpty = true;
@@ -64,9 +67,16 @@ class ServerSomething extends Thread {
                         writer.write("Write");
                         writer.newLine();
                         writer.flush();
-                        String message = readerSystem.readLine();
+                        String message = reader.readLine();
                         System.out.println(message);
+                    } else {
+                        writer.write("Expect");
+                        writer.newLine();
+                        writer.flush();
                     }
+
+                    // Дописать удаление из очереди после "exit"
+
                     /*
                     word = in.readLine();
                     if(word.equals("exit")) {
