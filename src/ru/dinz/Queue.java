@@ -13,7 +13,6 @@ public class Queue {
     private static PriorityBlockingQueue<Token> priorityQueue = new PriorityBlockingQueue<>();
 
     public static Map<Token, Integer> getMap() {
-        System.out.println(mapDataBase);
         return mapDataBase;
     }
 

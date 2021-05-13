@@ -1,11 +1,13 @@
 package ru.dinz;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-public class Token implements Comparable<Token> {
+public class Token implements Comparable<Token>, Serializable {
     private Integer token;
     private Account account;
+    private static int priority = 9999;
 
     public Token(Account account) {
         this.account = account;
@@ -37,7 +39,7 @@ public class Token implements Comparable<Token> {
     @Override
     public int compareTo(Token o) {
         Map<Token, Integer> mapDataBase = Queue.getMap();
-        int priority1 = 999, priority2 = 999;
+        int priority1 = --priority, priority2 = --priority;
         if (mapDataBase.containsKey(this)) {
             priority1 = mapDataBase.get(this);
         }

@@ -9,6 +9,8 @@ class ServerSomething extends Thread {
     private BufferedReader in; // поток чтения из сокета
     private BufferedWriter writer; // поток записи в сокет
     private ObjectInputStream inObject;
+    private static ObjectOutputStream outObject;
+    private static BufferedReader readerSystem;
 
     /**
      * для общения с клиентом необходим сокет (адресные данные)
@@ -16,12 +18,14 @@ class ServerSomething extends Thread {
      * @throws IOException
      */
 
-    public ServerSomething(Socket socket) throws IOException {
+    public ServerSomething(Socket socket) throws IOException, ClassNotFoundException, InterruptedException {
         this.socket = socket;
         // если потоку ввода/вывода приведут к генерированию искдючения, оно проброситься дальше
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         inObject = new ObjectInputStream(socket.getInputStream());
+        outObject = new ObjectOutputStream(socket.getOutputStream());
+        readerSystem = new BufferedReader(new InputStreamReader(System.in));
         Server.story.printStory(writer); // поток вывода передаётся для передачи истории последних 10
         // сооюбщений новому поключению
         start(); // вызываем run()
@@ -32,10 +36,14 @@ class ServerSomething extends Thread {
         try {
             // первое сообщение отправленное сюда - это никнейм
             //word = in.readLine();
-
             Account account = (Account) inObject.readObject();
             System.out.println(account);
-            Queue.add(new Token(account));
+            Token token = new Token(account);
+            Queue.add(token);
+
+            //outObject.writeObject(token);
+            //outObject.flush();
+
             writer.write(account.getName() + " connection!");
             writer.newLine();
             writer.flush();
@@ -48,21 +56,33 @@ class ServerSomething extends Thread {
                 while (true) {
                     //!!!
                     //Поставить условие проверки очередии
-
+                    boolean isEmpty = false;
+                    if (Queue.getPriorityQueue().peek().equals(token)) {
+                        isEmpty = true;
+                    }
+                    if (isEmpty) {
+                        writer.write("Write");
+                        writer.newLine();
+                        writer.flush();
+                        String message = readerSystem.readLine();
+                        System.out.println(message);
+                    }
+                    /*
                     word = in.readLine();
-                    if(word.equals("stop")) {
-                        this.downService(); // харакири
-                        break; // если пришла пустая строка - выходим из цикла прослушки
+                    if(word.equals("exit")) {
+                        this.downService();
+                        break;
                     }
                     System.out.println("Echoing: " + word);
                     Server.story.addStoryEl(word);
                     for (ServerSomething vr : Server.serverList) {
                         vr.send(word); // отослать принятое сообщение с привязанного клиента всем остальным влючая его
                     }
+                    */
                 }
-            } catch (NullPointerException ignored) {}
+            } catch (NullPointerException ignored) {
 
-
+            }
         } catch (IOException | ClassNotFoundException e) {
             this.downService();
         }

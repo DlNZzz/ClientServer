@@ -14,25 +14,40 @@ public class Client {
     private static BufferedReader reader;
     private static BufferedReader readerSystem;
     private static ObjectOutputStream outObject;
+    private static ObjectInputStream inObject;
 
-    public static void main(String[] args) throws IOException {
-        clientSocket = new Socket("127.0.0.1", 4721);
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException, NullPointerException {
+        clientSocket = new Socket("127.0.0.1", 4722);
         writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outObject = new ObjectOutputStream(clientSocket.getOutputStream());
+        inObject = new ObjectInputStream(clientSocket.getInputStream());
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
         Client client = new Client();
         client.go();
     }
 
-    public void go() throws IOException {
+    public void go() throws IOException, ClassNotFoundException, InterruptedException, NullPointerException {
         Account account = createAccount();
         outObject.writeObject(account);
         outObject.flush();
-        writer.flush();
-
-        String message = reader.readLine();
-        System.out.println(message);
+        //writer.flush();
+        System.out.println(reader.readLine());
+        boolean isEmpty = false;
+        while (!isEmpty) {
+            String property = reader.readLine();
+            System.out.println(property);
+            String message = readerSystem.readLine();
+            if (property.equals("Write")) {
+                writer.write(message);
+                writer.newLine();
+                writer.flush();
+            }
+            if (message.equals("exit")) {
+                isEmpty = true;
+            }
+        }
+        //Token token = (Token) inObject.readObject();
         /*
         while (reader.ready()) {
             message = reader.readLine();
@@ -54,7 +69,7 @@ public class Client {
      * @return Account
      * @throws IOException
      */
-    public Account createAccount() throws IOException {
+    public Account createAccount() throws IOException, NullPointerException {
         System.out.print("Client start!\nEnter name: ");
         String name = readerSystem.readLine();
         System.out.print("Enter password: ");
@@ -67,7 +82,7 @@ public class Client {
      * Closes streams
      * @throws IOException
      */
-    private void close() throws IOException {
+    private void close() throws IOException, NullPointerException {
         clientSocket.close();
         writer.close();
         reader.close();
