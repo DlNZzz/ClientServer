@@ -6,12 +6,12 @@ import java.util.*;
 
 public class Server {
 
-    public static final int PORT = 4722;
+    public static final int PORT = 4723;
     private static Socket clientSocket;
     private static ServerSocket serverSocket;
-    private static BufferedWriter writer;
-    private static BufferedReader reader;
-    private static ObjectInputStream inObject;
+    //private static BufferedWriter writer;
+    //private static BufferedReader reader;
+    //private static ObjectInputStream inObject;
     /**
      * список всех нитей - экземпляров
      */
@@ -26,7 +26,7 @@ public class Server {
     }
 
     public void go(ServerSocket serverSocket) throws IOException, ClassNotFoundException, InterruptedException {
-        int count = 0;
+        //int count = 0;
         /*
         while (true) {
 
@@ -69,9 +69,9 @@ public class Server {
 
     private void close() throws IOException {
         //clientSocket.close();
-        writer.close();
-        reader.close();
-        inObject.close();
+        //writer.close();
+        //reader.close();
+        //inObject.close();
         //serverSocket.close();
     }
 }

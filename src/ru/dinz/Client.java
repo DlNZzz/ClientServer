@@ -17,7 +17,7 @@ public class Client {
     private static ObjectInputStream inObject;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException, NullPointerException {
-        clientSocket = new Socket("127.0.0.1", 4722);
+        clientSocket = new Socket("127.0.0.1", 4723);
         writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outObject = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -27,24 +27,27 @@ public class Client {
         client.go();
     }
 
-    public void go() throws IOException, ClassNotFoundException, InterruptedException, NullPointerException {
+    public void go() throws IOException, NullPointerException {
         Account account = createAccount();
         outObject.writeObject(account);
         outObject.flush();
-        //writer.flush();
+
         System.out.println(reader.readLine());
         boolean isEmpty = false;
         while (!isEmpty) {
             String property = reader.readLine();
             System.out.println(property);
             String message = readerSystem.readLine();
-            if (property.equals("Write")) {
+            if (message.equals("exit")) {
+                isEmpty = true;
                 writer.write(message);
                 writer.newLine();
                 writer.flush();
             }
-            if (message.equals("exit")) {
-                isEmpty = true;
+            if (property.equals("Write") && !isEmpty) {
+                writer.write(message);
+                writer.newLine();
+                writer.flush();
             }
         }
         //Token token = (Token) inObject.readObject();

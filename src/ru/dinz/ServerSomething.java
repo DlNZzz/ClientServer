@@ -35,12 +35,13 @@ class ServerSomething extends Thread {
     @Override
     public void run() {
         String word;
+        Token token = null;
         try {
             // первое сообщение отправленное сюда - это никнейм
             //word = in.readLine();
             Account account = (Account) inObject.readObject();
             System.out.println(account);
-            Token token = new Token(account);
+            token = new Token(account);
             Queue.add(token);
 
             //outObject.writeObject(token);
@@ -59,20 +60,21 @@ class ServerSomething extends Thread {
                     //!!!
                     //Поставить условие проверки очередии
                     // поставил
-                    boolean isEmpty = false;
+                    String message;
                     if (Queue.getPriorityQueue().peek().equals(token)) {
-                        isEmpty = true;
-                    }
-                    if (isEmpty) {
                         writer.write("Write");
                         writer.newLine();
                         writer.flush();
-                        String message = reader.readLine();
+                        message = reader.readLine();
                         System.out.println(message);
                     } else {
                         writer.write("Expect");
                         writer.newLine();
                         writer.flush();
+                        message = reader.readLine();
+                    }
+                    if (message.equals("exit")) {
+                        closeService(token);
                     }
 
                     // Дописать удаление из очереди после "exit"
@@ -94,7 +96,7 @@ class ServerSomething extends Thread {
 
             }
         } catch (IOException | ClassNotFoundException e) {
-            this.downService();
+            this.closeService(token);
         }
     }
 
@@ -114,17 +116,28 @@ class ServerSomething extends Thread {
      * закрытие сервера
      * прерывание себя как нити и удаление из списка нитей
      */
-    private void downService() {
+    private void closeService(Token token) {
         try {
+            if (token != null) {
+                Queue.delete(token);
+            }
             if(!socket.isClosed()) {
                 socket.close();
                 in.close();
                 writer.close();
-                for (ServerSomething vr : Server.serverList) {
-                    if(vr.equals(this)) vr.interrupt();
+                reader.close();
+                inObject.close();
+                readerSystem.close();
+                outObject.close();
+                for (ServerSomething serverSomething : Server.serverList) {
+                    if(serverSomething.equals(this)) {
+                        serverSomething.interrupt();
+                    }
                     Server.serverList.remove(this);
                 }
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+
+        }
     }
 }
