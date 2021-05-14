@@ -5,13 +5,13 @@ import java.net.*;
 
 class ServerSomething extends Thread {
 
-    private static Socket socket; // сокет, через который сервер общается с клиентом
-    private static BufferedReader in; // поток чтения из сокета
-    private static BufferedWriter writer; // поток записи в сокет
-    private static ObjectInputStream inObject;
-    private static BufferedReader reader;
-    private static ObjectOutputStream outObject;
-    private static BufferedReader readerSystem;
+    private Socket socket; // сокет, через который сервер общается с клиентом
+    private BufferedReader in; // поток чтения из сокета
+    private BufferedWriter writer; // поток записи в сокет
+    private ObjectInputStream inObject;
+    private BufferedReader reader;
+    private ObjectOutputStream outObject;
+    private BufferedReader readerSystem;
 
     /**
      * для общения с клиентом необходим сокет (адресные данные)
@@ -32,9 +32,10 @@ class ServerSomething extends Thread {
         // сооюбщений новому поключению
         start(); // вызываем run()
     }
+
     @Override
     public void run() {
-        String word;
+        //String word;
         Token token = null;
         try {
             // первое сообщение отправленное сюда - это никнейм
@@ -61,8 +62,9 @@ class ServerSomething extends Thread {
                     //Поставить условие проверки очередии
                     // поставил
                     String message = "";
-                    System.out.println("Z!");
+                    //System.out.println(Thread.currentThread().getName());
                     if (Queue.getPriorityQueue().peek().equals(token)) {
+                        System.out.println("тут");
                         writer.write("Write");
                         writer.newLine();
                         writer.flush();
@@ -75,9 +77,29 @@ class ServerSomething extends Thread {
                         //message = reader.readLine();
                     }
                     if (message.equals("exit")) {
-                        Queue.delete(token);
-                        //closeService(token);
+                        closeService(token);
                     }
+
+                    /*
+                    boolean isEmpty = false;
+                    if (Queue.getPriorityQueue().peek().equals(token)) {
+                        isEmpty = true;
+                    }
+                    if (isEmpty) {
+                        writer.write("Write");
+                        writer.newLine();
+                        writer.flush();
+                        String message = reader.readLine();
+                        System.out.println(message);
+                    } else {
+                        writer.write("Expect");
+                        writer.newLine();
+                        writer.flush();
+                    }
+                    */
+
+
+
 
                     // Дописать удаление из очереди после "exit"
 
@@ -121,7 +143,7 @@ class ServerSomething extends Thread {
     private void closeService(Token token) {
         try {
             if (token != null) {
-                Queue.delete(token);
+                Queue.remove(token);
             }
             if(!socket.isClosed()) {
                 socket.close();

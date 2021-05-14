@@ -9,25 +9,25 @@ import java.util.function.*;
 
 public class Client {
 
-    private static Socket clientSocket;
-    private static BufferedWriter writer;
-    private static BufferedReader reader;
-    private static BufferedReader readerSystem;
-    private static ObjectOutputStream outObject;
-    private static ObjectInputStream inObject;
+    private Socket clientSocket;
+    private BufferedWriter writer;
+    private BufferedReader reader;
+    private BufferedReader readerSystem;
+    private ObjectOutputStream outObject;
+    private ObjectInputStream inObject;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException, NullPointerException {
-        clientSocket = new Socket("127.0.0.1", 4724);
-        writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-        reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        outObject = new ObjectOutputStream(clientSocket.getOutputStream());
-        inObject = new ObjectInputStream(clientSocket.getInputStream());
-        readerSystem = new BufferedReader(new InputStreamReader(System.in));
         Client client = new Client();
         client.go();
     }
 
     public void go() throws IOException, NullPointerException {
+        clientSocket = new Socket("127.0.0.1", 4727);
+        writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+        reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        outObject = new ObjectOutputStream(clientSocket.getOutputStream());
+        inObject = new ObjectInputStream(clientSocket.getInputStream());
+        readerSystem = new BufferedReader(new InputStreamReader(System.in));
         Account account = createAccount();
         outObject.writeObject(account);
         outObject.flush();
@@ -50,6 +50,25 @@ public class Client {
                 writer.flush();
             }
         }
+        /*
+        System.out.println(reader.readLine());
+        boolean isEmpty = false;
+        while (!isEmpty) {
+            String property = reader.readLine();
+            System.out.println(property);
+            String message = readerSystem.readLine();
+            if (property.equals("Write")) {
+                writer.write(message);
+                writer.newLine();
+                writer.flush();
+            }
+            if (message.equals("exit")) {
+                isEmpty = true;
+            }
+        }
+         */
+
+
         //Token token = (Token) inObject.readObject();
         /*
         while (reader.ready()) {

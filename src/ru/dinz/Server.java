@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Server {
 
-    public static final int PORT = 4724;
+    public static final int PORT = 4727;
     private static Socket clientSocket;
     private static ServerSocket serverSocket;
     //private static BufferedWriter writer;
@@ -26,7 +26,7 @@ public class Server {
     }
 
     public void go(ServerSocket serverSocket) throws IOException, ClassNotFoundException, InterruptedException {
-        //int count = 0;
+        int count = 0;
         /*
         while (true) {
 
@@ -63,7 +63,7 @@ public class Server {
                 }
             }
         } finally {
-            //close();
+            close();
         }
     }
 

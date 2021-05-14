@@ -24,15 +24,15 @@ public class Queue {
         priorityQueue.add(token);
     }
 
-    public static Token peek(Token token) {
+    public static Token peek() {
         return priorityQueue.peek();
     }
 
-    public static Token poll(Token token) {
+    public static Token poll() {
         return priorityQueue.poll();
     }
 
-    public static void delete(Token token) {
+    public static void remove(Token token) {
         priorityQueue.remove(token);
     }
 }
