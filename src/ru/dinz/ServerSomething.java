@@ -5,10 +5,10 @@ import java.net.*;
 
 class ServerSomething extends Thread {
 
-    private Socket socket; // сокет, через который сервер общается с клиентом
-    private BufferedReader in; // поток чтения из сокета
-    private BufferedWriter writer; // поток записи в сокет
-    private ObjectInputStream inObject;
+    private static Socket socket; // сокет, через который сервер общается с клиентом
+    private static BufferedReader in; // поток чтения из сокета
+    private static BufferedWriter writer; // поток записи в сокет
+    private static ObjectInputStream inObject;
     private static BufferedReader reader;
     private static ObjectOutputStream outObject;
     private static BufferedReader readerSystem;
@@ -60,7 +60,8 @@ class ServerSomething extends Thread {
                     //!!!
                     //Поставить условие проверки очередии
                     // поставил
-                    String message;
+                    String message = "";
+                    System.out.println("Z!");
                     if (Queue.getPriorityQueue().peek().equals(token)) {
                         writer.write("Write");
                         writer.newLine();
@@ -71,10 +72,11 @@ class ServerSomething extends Thread {
                         writer.write("Expect");
                         writer.newLine();
                         writer.flush();
-                        message = reader.readLine();
+                        //message = reader.readLine();
                     }
                     if (message.equals("exit")) {
-                        closeService(token);
+                        Queue.delete(token);
+                        //closeService(token);
                     }
 
                     // Дописать удаление из очереди после "exit"

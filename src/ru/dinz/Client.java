@@ -17,7 +17,7 @@ public class Client {
     private static ObjectInputStream inObject;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException, NullPointerException {
-        clientSocket = new Socket("127.0.0.1", 4723);
+        clientSocket = new Socket("127.0.0.1", 4724);
         writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outObject = new ObjectOutputStream(clientSocket.getOutputStream());
