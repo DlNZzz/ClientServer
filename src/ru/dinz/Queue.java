@@ -10,7 +10,7 @@ public class Queue {
             new Token(new Account("13", "1")), 3,
             new Token(new Account("133", "1")), 12
     );
-    private static PriorityBlockingQueue<Token> priorityQueue = new PriorityBlockingQueue<>();
+    private volatile static PriorityBlockingQueue<Token> priorityQueue = new PriorityBlockingQueue<>();
 
     public static Map<Token, Integer> getMap() {
         return mapDataBase;

@@ -22,12 +22,6 @@ class ServerSomething extends Thread {
     public ServerSomething(Socket socket) throws IOException, ClassNotFoundException, InterruptedException {
         this.socket = socket;
         // если потоку ввода/вывода приведут к генерированию искдючения, оно проброситься дальше
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        inObject = new ObjectInputStream(socket.getInputStream());
-        outObject = new ObjectOutputStream(socket.getOutputStream());
-        readerSystem = new BufferedReader(new InputStreamReader(System.in));
         //Server.story.printStory(writer); // поток вывода передаётся для передачи истории последних 10
         // сооюбщений новому поключению
         start(); // вызываем run()
@@ -36,6 +30,17 @@ class ServerSomething extends Thread {
     @Override
     public void run() {
         //String word;
+        try {
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            inObject = new ObjectInputStream(socket.getInputStream());
+            outObject = new ObjectOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        readerSystem = new BufferedReader(new InputStreamReader(System.in));
+
         Token token = null;
         try {
             // первое сообщение отправленное сюда - это никнейм
@@ -64,7 +69,7 @@ class ServerSomething extends Thread {
                     String message = "";
                     //System.out.println(Thread.currentThread().getName());
                     if (Queue.getPriorityQueue().peek().equals(token)) {
-                        System.out.println("тут");
+                        //System.out.println("тут");
                         writer.write("Write");
                         writer.newLine();
                         writer.flush();
@@ -74,7 +79,7 @@ class ServerSomething extends Thread {
                         writer.write("Expect");
                         writer.newLine();
                         writer.flush();
-                        //message = reader.readLine();
+                        message = reader.readLine();
                     }
                     if (message.equals("exit")) {
                         closeService(token);
@@ -143,7 +148,9 @@ class ServerSomething extends Thread {
     private void closeService(Token token) {
         try {
             if (token != null) {
+                System.out.println(Queue.getPriorityQueue());
                 Queue.remove(token);
+                System.out.println(Queue.getPriorityQueue());
             }
             if(!socket.isClosed()) {
                 socket.close();

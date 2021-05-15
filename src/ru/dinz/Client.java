@@ -28,11 +28,12 @@ public class Client {
         outObject = new ObjectOutputStream(clientSocket.getOutputStream());
         inObject = new ObjectInputStream(clientSocket.getInputStream());
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
+
         Account account = createAccount();
         outObject.writeObject(account);
         outObject.flush();
-
         System.out.println(reader.readLine());
+
         boolean isEmpty = false;
         while (!isEmpty) {
             String property = reader.readLine();
@@ -40,15 +41,12 @@ public class Client {
             String message = readerSystem.readLine();
             if (message.equals("exit")) {
                 isEmpty = true;
+            }
+            //if (property.equals("Write") && !isEmpty) {
                 writer.write(message);
                 writer.newLine();
                 writer.flush();
-            }
-            if (property.equals("Write") && !isEmpty) {
-                writer.write(message);
-                writer.newLine();
-                writer.flush();
-            }
+            //}
         }
         /*
         System.out.println(reader.readLine());
