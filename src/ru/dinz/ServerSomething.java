@@ -75,13 +75,13 @@ class ServerSomething extends Thread {
                     if (message.equals("exit")) {
                         closeService(token);
                     }
-                    //System.out.println("Echoing: " + message);
-                    /*
+                    System.out.println("Echoing: " + message);
+
                     Server.story.addStoryEl(message);
                     for (ServerSomething vr : Server.serverList) {
                         vr.send(message); // отослать принятое сообщение с привязанного клиента всем остальным влючая его
                     }
-                     */
+
                 }
             } catch (NullPointerException ignored) {
 
