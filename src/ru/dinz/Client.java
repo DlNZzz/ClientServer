@@ -9,65 +9,46 @@ import java.util.function.*;
 
 public class Client {
 
-    private Socket clientSocket;
-    private BufferedWriter writer;
-    private BufferedReader reader;
-    private BufferedReader readerSystem;
-    private ObjectOutputStream outObject;
-    private ObjectInputStream inObject;
+    private static Socket clientSocket;
+    private static BufferedWriter writer;
+    private static BufferedReader reader;
+    private static BufferedReader readerSystem;
+    private static ObjectOutputStream outObject;
+    private static ObjectInputStream inObject;
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException, NullPointerException {
-        Client client = new Client();
-        client.go();
-    }
-
-    public void go() throws IOException, NullPointerException {
-        clientSocket = new Socket("127.0.0.1", 4727);
+    public static void main(String[] args) throws IOException, NullPointerException {
+        clientSocket = new Socket("127.0.0.1", 4729);
         writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         outObject = new ObjectOutputStream(clientSocket.getOutputStream());
         inObject = new ObjectInputStream(clientSocket.getInputStream());
+        Client client = new Client();
+        client.go();
+    }
+
+    public void go() {
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
-
-        Account account = createAccount();
-        outObject.writeObject(account);
-        outObject.flush();
-        System.out.println(reader.readLine());
-
-        boolean isEmpty = false;
-        while (!isEmpty) {
-            String property = reader.readLine();
-            System.out.println(property);
-            String message = readerSystem.readLine();
-            if (message.equals("exit")) {
-                isEmpty = true;
-            }
-            //if (property.equals("Write") && !isEmpty) {
-                writer.write(message);
-                writer.newLine();
-                writer.flush();
-            //}
-        }
-        /*
-        System.out.println(reader.readLine());
-        boolean isEmpty = false;
-        while (!isEmpty) {
-            String property = reader.readLine();
-            System.out.println(property);
-            String message = readerSystem.readLine();
-            if (property.equals("Write")) {
+        try {
+            Account account = createAccount();
+            outObject.writeObject(account);
+            outObject.flush();
+            System.out.println(reader.readLine());
+            boolean isEmpty = false;
+            while (!isEmpty) {
+                String property = reader.readLine();
+                System.out.println(property);
+                String message = readerSystem.readLine();
+                if (message.equals("exit")) {
+                    isEmpty = true;
+                }
                 writer.write(message);
                 writer.newLine();
                 writer.flush();
             }
-            if (message.equals("exit")) {
-                isEmpty = true;
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-         */
 
-
-        //Token token = (Token) inObject.readObject();
         /*
         while (reader.ready()) {
             message = reader.readLine();
@@ -102,12 +83,16 @@ public class Client {
      * Closes streams
      * @throws IOException
      */
-    private void close() throws IOException, NullPointerException {
-        clientSocket.close();
-        writer.close();
-        reader.close();
-        readerSystem.close();
-        outObject.close();
+    private void close() {
+        try {
+            clientSocket.close();
+            writer.close();
+            reader.close();
+            readerSystem.close();
+            outObject.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

@@ -5,10 +5,10 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 public class Queue {
     private static Map<Token, Integer> mapDataBase = Map.of(
-            new Token(new Account("1", "1")), 1,
-            new Token(new Account("11", "1")), 2,
-            new Token(new Account("13", "1")), 3,
-            new Token(new Account("133", "1")), 12
+            new Token(new Account("Admin", "1")), 1,
+            new Token(new Account("2", "2")), 2,
+            new Token(new Account("3", "3")), 3,
+            new Token(new Account("4", "4")), 12
     );
     private volatile static PriorityBlockingQueue<Token> priorityQueue = new PriorityBlockingQueue<>();
 

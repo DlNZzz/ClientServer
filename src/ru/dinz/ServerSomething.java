@@ -12,6 +12,7 @@ class ServerSomething extends Thread {
     private BufferedReader reader;
     private ObjectOutputStream outObject;
     private BufferedReader readerSystem;
+    private FileWriter writerFile;
 
     /**
      * для общения с клиентом необходим сокет (адресные данные)
@@ -29,13 +30,13 @@ class ServerSomething extends Thread {
 
     @Override
     public void run() {
-        //String word;
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             inObject = new ObjectInputStream(socket.getInputStream());
             outObject = new ObjectOutputStream(socket.getOutputStream());
+            writerFile = new FileWriter("notes.txt", true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,16 +44,10 @@ class ServerSomething extends Thread {
 
         Token token = null;
         try {
-            // первое сообщение отправленное сюда - это никнейм
-            //word = in.readLine();
             Account account = (Account) inObject.readObject();
             System.out.println(account);
             token = new Token(account);
             Queue.add(token);
-
-            //outObject.writeObject(token);
-            //outObject.flush();
-
             writer.write(account.getName() + " connection!");
             writer.newLine();
             writer.flush();
@@ -63,18 +58,14 @@ class ServerSomething extends Thread {
             //} catch (IOException ignored) {}
             try {
                 while (true) {
-                    //!!!
-                    //Поставить условие проверки очередии
-                    // поставил
                     String message = "";
-                    //System.out.println(Thread.currentThread().getName());
                     if (Queue.getPriorityQueue().peek().equals(token)) {
-                        //System.out.println("тут");
                         writer.write("Write");
                         writer.newLine();
                         writer.flush();
                         message = reader.readLine();
-                        System.out.println(message);
+                        writerFile.write(message + "\n");
+                        writerFile.flush();
                     } else {
                         writer.write("Expect");
                         writer.newLine();
@@ -84,42 +75,13 @@ class ServerSomething extends Thread {
                     if (message.equals("exit")) {
                         closeService(token);
                     }
-
+                    //System.out.println("Echoing: " + message);
                     /*
-                    boolean isEmpty = false;
-                    if (Queue.getPriorityQueue().peek().equals(token)) {
-                        isEmpty = true;
-                    }
-                    if (isEmpty) {
-                        writer.write("Write");
-                        writer.newLine();
-                        writer.flush();
-                        String message = reader.readLine();
-                        System.out.println(message);
-                    } else {
-                        writer.write("Expect");
-                        writer.newLine();
-                        writer.flush();
-                    }
-                    */
-
-
-
-
-                    // Дописать удаление из очереди после "exit"
-
-                    /*
-                    word = in.readLine();
-                    if(word.equals("exit")) {
-                        this.downService();
-                        break;
-                    }
-                    System.out.println("Echoing: " + word);
-                    Server.story.addStoryEl(word);
+                    Server.story.addStoryEl(message);
                     for (ServerSomething vr : Server.serverList) {
-                        vr.send(word); // отослать принятое сообщение с привязанного клиента всем остальным влючая его
+                        vr.send(message); // отослать принятое сообщение с привязанного клиента всем остальным влючая его
                     }
-                    */
+                     */
                 }
             } catch (NullPointerException ignored) {
 
@@ -137,8 +99,9 @@ class ServerSomething extends Thread {
         try {
             writer.write(msg + "\n");
             writer.flush();
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
 
+        }
     }
 
     /**
@@ -148,9 +111,7 @@ class ServerSomething extends Thread {
     private void closeService(Token token) {
         try {
             if (token != null) {
-                System.out.println(Queue.getPriorityQueue());
                 Queue.remove(token);
-                System.out.println(Queue.getPriorityQueue());
             }
             if(!socket.isClosed()) {
                 socket.close();

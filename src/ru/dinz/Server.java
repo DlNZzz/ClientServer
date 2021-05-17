@@ -3,15 +3,16 @@ package ru.dinz;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
+/*
+1 все клиенты должны видеть записанное
+2 подключаться могут только те кто в списке
+3 сервер должен в реальном времени оповещать статус клиента
+ */
 public class Server {
 
-    public static final int PORT = 4727;
+    public static final int PORT = 4729;
     private static Socket clientSocket;
     private static ServerSocket serverSocket;
-    //private static BufferedWriter writer;
-    //private static BufferedReader reader;
-    //private static ObjectInputStream inObject;
     /**
      * список всех нитей - экземпляров
      */
@@ -26,39 +27,15 @@ public class Server {
     }
 
     public void go(ServerSocket serverSocket) throws IOException, ClassNotFoundException, InterruptedException {
-        int count = 0;
-        /*
-        while (true) {
-
-            writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            String request = reader.readLine();
-            String response = "#" + ++count + ", Your message is " + request;
-            writer.write(response);
-            writer.newLine();
-            writer.flush();
-
-            Account account = (Account) inObject.readObject();
-            System.out.println(account);
-
-            writer.write(account.getName() + " connection!");
-            writer.newLine();
-            close();
-        }
-        */
         try {
             while (true) {
-                // Блокируется до возникновения нового соединения:
                 clientSocket = serverSocket.accept();
                 System.out.println("Accepted");
                 System.out.println("IP is: " + ((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
                 System.out.println("PORT is: " + clientSocket.getRemoteSocketAddress().toString().split(":")[1]);
                 try {
-                    serverList.add(new ServerSomething(clientSocket)); // добавить новое соединенние в список
+                    serverList.add(new ServerSomething(clientSocket));
                 } catch (IOException e) {
-                    // Если завершится неудачей, закрывается сокет,
-                    // в противном случае, нить закроет его:
                     clientSocket.close();
                 }
             }
