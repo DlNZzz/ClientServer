@@ -14,18 +14,6 @@ public class ClientSomething {
     private BufferedReader readerSystemConsole;
     private ObjectOutputStream outObject;
 
-    {
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            outObject = new ObjectOutputStream(clientSocket.getOutputStream());
-            readerSystemConsole = new BufferedReader(new InputStreamReader(System.in));
-        } catch (IOException e) {
-            e.printStackTrace();
-            closeService();
-        }
-    }
-
     ClientSomething(String serverIp, short serverPort, Account account) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
@@ -40,10 +28,19 @@ public class ClientSomething {
             e.printStackTrace();
             System.err.println("Socket failed");
         }
-        if (addAccountToServer()) {
-            new ReadMessage().start();
-            new WriteMessage().start();
-        } else {
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            outObject = new ObjectOutputStream(clientSocket.getOutputStream());
+            readerSystemConsole = new BufferedReader(new InputStreamReader(System.in));
+            if (addAccountToServer()) {
+                new ReadMessage().start();
+                new WriteMessage().start();
+            } else {
+                closeService();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
             closeService();
         }
     }
