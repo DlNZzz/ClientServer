@@ -16,7 +16,7 @@ public class Queue {
         return mapDataBase;
     }
 
-    public static PriorityBlockingQueue<Token> getPriorityQueue() {
+    public synchronized static PriorityBlockingQueue<Token> getPriorityQueue() {
         return priorityQueue;
     }
 
@@ -34,6 +34,11 @@ public class Queue {
 
     public static void remove(Token token) {
         priorityQueue.remove(token);
+    }
+
+    @Override
+    public String toString() {
+        return "Queue{}";
     }
 }
 

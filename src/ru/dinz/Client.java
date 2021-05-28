@@ -10,7 +10,7 @@ public class Client {
 
     static {
         serverIp = "127.0.0.1";
-        serverPort = 4729;
+        serverPort = 4730;
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
     }
 

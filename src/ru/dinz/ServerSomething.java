@@ -2,12 +2,12 @@ package ru.dinz;
 
 import java.io.*;
 import java.net.*;
+import java.util.Objects;
 
 class ServerSomething extends Thread {
 
-    private Socket socket; // сокет, через который сервер общается с клиентом
-    private BufferedReader in; // поток чтения из сокета
-    private BufferedWriter writer; // поток записи в сокет
+    private Socket socket;
+    private BufferedWriter writer;
     private ObjectInputStream inObject;
     private BufferedReader reader;
     private ObjectOutputStream outObject;
@@ -20,18 +20,16 @@ class ServerSomething extends Thread {
      * @throws IOException
      */
 
-    public ServerSomething(Socket socket) throws IOException, ClassNotFoundException, InterruptedException {
+    public ServerSomething(Socket socket) {
         this.socket = socket;
-        // если потоку ввода/вывода приведут к генерированию искдючения, оно проброситься дальше
         //Server.story.printStory(writer); // поток вывода передаётся для передачи истории последних 10
-        // сооюбщений новому поключению
-        start(); // вызываем run()
+        // сообщений новому поключению
+        start();
     }
 
     @Override
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             inObject = new ObjectInputStream(socket.getInputStream());
@@ -41,52 +39,61 @@ class ServerSomething extends Thread {
             e.printStackTrace();
         }
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
-
         Token token = null;
         try {
             Account account = (Account) inObject.readObject();
-            System.out.println(account);
             token = new Token(account);
-            Queue.add(token);
-            writer.write(account.getName() + " connection!");
-            writer.newLine();
-            writer.flush();
-            //try {
-                //writer.write(word + "\n");
-                //writer.flush(); // flush() нужен для выталкивания оставшихся данных
-                // если такие есть, и очистки потока для дальнейших нужд
-            //} catch (IOException ignored) {}
-            try {
-                while (true) {
-                    String message = "";
-                    if (Queue.getPriorityQueue().peek().equals(token)) {
-                        writer.write("Write");
-                        writer.newLine();
-                        writer.flush();
-                        message = reader.readLine();
-                        writerFile.write(message + "\n");
-                        writerFile.flush();
-                    } else {
-                        writer.write("Expect");
-                        writer.newLine();
-                        writer.flush();
-                        message = reader.readLine();
+            if (Queue.getMap().containsKey(token)) {
+                System.out.println(account);
+                Queue.add(token);
+                writer.write("");
+                writer.newLine();
+                writer.flush();
+                writer.write("Account found!");
+                writer.newLine();
+                writer.flush();
+                String recordRelevance = "";
+                try {
+                    while (true) {
+                        String message = "";
+                        //System.out.println(Queue.getPriorityQueue().peek());
+                        if (Objects.equals(Queue.getPriorityQueue().peek(), token)) {
+                            recordRelevance = "Write";
+                            writer.write(recordRelevance);
+                            writer.newLine();
+                            writer.flush();
+                            System.out.println("блокировка");
+                            message = reader.readLine();
+                            System.out.println("65 message - " + message);
+                            writerFile.write(message + "\n");
+                            writerFile.flush();
+                            System.out.println("Echoing: " + message);
+                            for (ServerSomething vr : Server.serverList) {
+                                vr.send(message);
+                            }
+                        } else if (!"Expect".equals(recordRelevance)) {
+                            recordRelevance = "Expect";
+                            writer.write(recordRelevance);
+                            writer.newLine();
+                            writer.flush();
+                        }
+                        if ("exit".equals(message)) {
+                            System.out.println("73 строка");
+                            closeService(token);
+                        }
                     }
-                    if (message.equals("exit")) {
-                        closeService(token);
-                    }
-                    System.out.println("Echoing: " + message);
-
-                    Server.story.addStoryEl(message);
-                    for (ServerSomething vr : Server.serverList) {
-                        vr.send(message); // отослать принятое сообщение с привязанного клиента всем остальным влючая его
-                    }
-
+                } catch (NullPointerException ignored) {
                 }
-            } catch (NullPointerException ignored) {
-
+            } else {
+                System.out.println("Account not found");
+                writer.write("Account not found!");
+                writer.newLine();
+                writer.flush();
+                closeService(token);
             }
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("93");
             this.closeService(token);
         }
     }
@@ -110,12 +117,13 @@ class ServerSomething extends Thread {
      */
     private void closeService(Token token) {
         try {
+            System.out.println("114 строка token - " + token);
             if (token != null) {
                 Queue.remove(token);
+                System.out.println(Queue.getPriorityQueue() + " 119");
             }
             if(!socket.isClosed()) {
                 socket.close();
-                in.close();
                 writer.close();
                 reader.close();
                 inObject.close();

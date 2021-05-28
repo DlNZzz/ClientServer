@@ -49,6 +49,7 @@ public class ClientSomething {
         try {
             outObject.writeObject(account);
             outObject.flush();
+            reader.readLine();
             String message = reader.readLine();
             System.out.println(message);
             return message.equals("Account found!");
@@ -62,14 +63,40 @@ public class ClientSomething {
     class ReadMessage extends Thread {
         @Override
         public void run() {
-            super.run();
+            String message;
+            try {
+                while (true)  {
+                    message = reader.readLine();
+                    System.out.println(message);
+                }
+            } catch (IOException e) {
+                closeService();
+            }
         }
     }
 
     class WriteMessage extends Thread {
         @Override
         public void run() {
-            super.run();
+            while (true) {
+                String messageUser;
+                try {
+                    messageUser = readerSystemConsole.readLine();
+                    if (messageUser.equals("exit")) {
+                        writer.write("stop");
+                        writer.newLine();
+                        writer.flush();
+                        closeService();
+                        break;
+                    } else {
+                        writer.write(messageUser);
+                        writer.newLine();
+                        writer.flush();
+                    }
+                } catch (IOException e) {
+                    closeService();
+                }
+            }
         }
     }
 

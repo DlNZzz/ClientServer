@@ -10,34 +10,30 @@ import java.util.*;
  */
 public class Server {
 
-    public static final int PORT = 4729;
+    public static final int PORT = 4730;
     private static Socket clientSocket;
     private static ServerSocket serverSocket;
     /**
      * список всех нитей - экземпляров
      */
     public static List<ServerSomething> serverList = new ArrayList<>();
-    public static Story story;
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        System.out.println("Server Started");
+    public static void main(String[] args) throws IOException {
         serverSocket = new ServerSocket(PORT);
-        story = new Story();
         new Server().go(serverSocket);
     }
 
-    public void go(ServerSocket serverSocket) throws IOException, ClassNotFoundException, InterruptedException {
+    public void go(ServerSocket serverSocket) throws IOException {
+        System.out.println("Server Started");
         try {
             while (true) {
                 clientSocket = serverSocket.accept();
                 System.out.println("Accepted");
-                System.out.println("IP is: " + ((InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
-                System.out.println("PORT is: " + clientSocket.getRemoteSocketAddress().toString().split(":")[1]);
-                try {
-                    serverList.add(new ServerSomething(clientSocket));
-                } catch (IOException e) {
-                    clientSocket.close();
-                }
+                System.out.println("IP is: " + ((InetSocketAddress)
+                        clientSocket.getRemoteSocketAddress()).getAddress().toString().split("/")[1]);
+                System.out.println("PORT is: "
+                        + clientSocket.getRemoteSocketAddress().toString().split(":")[1]);
+                serverList.add(new ServerSomething(clientSocket));
             }
         } finally {
             close();
