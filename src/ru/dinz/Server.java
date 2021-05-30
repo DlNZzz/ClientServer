@@ -2,7 +2,11 @@ package ru.dinz;
 
 import java.io.*;
 import java.net.*;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.*;
+import java.util.concurrent.Semaphore;
+
 /*
 1 все клиенты должны видеть записанное
 2 подключаться могут только те кто в списке
@@ -25,8 +29,11 @@ public class Server {
 
     public void go(ServerSocket serverSocket) throws IOException {
         System.out.println("Server Started");
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.bind(new InetSocketAddress(PORT));
         try {
             while (true) {
+                SocketChannel socketChannel = serverSocketChannel.accept();
                 clientSocket = serverSocket.accept();
                 System.out.println("Accepted");
                 System.out.println("IP is: " + ((InetSocketAddress)

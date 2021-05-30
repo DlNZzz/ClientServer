@@ -64,12 +64,14 @@ class ServerSomething extends Thread {
                             writer.flush();
                             System.out.println("блокировка");
                             message = reader.readLine();
-                            System.out.println("65 message - " + message);
-                            writerFile.write(message + "\n");
-                            writerFile.flush();
-                            System.out.println("Echoing: " + message);
-                            for (ServerSomething vr : Server.serverList) {
-                                vr.send(message);
+                            if (!"".equals(message)) {
+                                System.out.println("65 message - " + message);
+                                writerFile.write(message + "\n");
+                                writerFile.flush();
+                                System.out.println("Echoing: " + message);
+                                for (ServerSomething vr : Server.serverList) {
+                                    vr.send(message);
+                                }
                             }
                         } else if (!"Expect".equals(recordRelevance)) {
                             recordRelevance = "Expect";

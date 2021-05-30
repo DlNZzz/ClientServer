@@ -1,6 +1,7 @@
 package ru.dinz;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class Queue {
@@ -10,13 +11,13 @@ public class Queue {
             new Token(new Account("3", "3")), 3,
             new Token(new Account("4", "4")), 12
     );
-    private volatile static PriorityBlockingQueue<Token> priorityQueue = new PriorityBlockingQueue<>();
+    private volatile static BlockingQueue<Token> priorityQueue = new PriorityBlockingQueue<>();
 
     public static Map<Token, Integer> getMap() {
         return mapDataBase;
     }
 
-    public synchronized static PriorityBlockingQueue<Token> getPriorityQueue() {
+    public synchronized static BlockingQueue<Token> getPriorityQueue() {
         return priorityQueue;
     }
 
