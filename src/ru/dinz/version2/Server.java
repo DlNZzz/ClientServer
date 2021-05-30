@@ -1,11 +1,10 @@
-package ru.dinz;
+package ru.dinz.version2;
 
 import java.io.*;
 import java.net.*;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
-import java.util.concurrent.Semaphore;
 
 /*
 1 все клиенты должны видеть записанное
@@ -14,7 +13,7 @@ import java.util.concurrent.Semaphore;
  */
 public class Server {
 
-    public static final int PORT = 4730;
+    public static final int PORT = 4735;
     private static Socket clientSocket;
     private static ServerSocket serverSocket;
     /**
@@ -29,11 +28,8 @@ public class Server {
 
     public void go(ServerSocket serverSocket) throws IOException {
         System.out.println("Server Started");
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.bind(new InetSocketAddress(PORT));
         try {
             while (true) {
-                SocketChannel socketChannel = serverSocketChannel.accept();
                 clientSocket = serverSocket.accept();
                 System.out.println("Accepted");
                 System.out.println("IP is: " + ((InetSocketAddress)

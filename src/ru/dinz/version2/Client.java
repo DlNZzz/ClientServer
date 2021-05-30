@@ -1,4 +1,4 @@
-package ru.dinz;
+package ru.dinz.version2;
 
 import java.io.*;
 
@@ -10,7 +10,7 @@ public class Client {
 
     static {
         serverIp = "127.0.0.1";
-        serverPort = 4730;
+        serverPort = 4735;
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
     }
 

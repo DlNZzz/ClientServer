@@ -1,4 +1,4 @@
-package ru.dinz;
+package ru.dinz.version2;
 
 import java.io.*;
 import java.net.*;

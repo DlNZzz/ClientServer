@@ -10,7 +10,7 @@ public class SocketChannelServer {
     public static void main(String[] args) throws IOException {
         Selector selector = Selector.open();
         ServerSocketChannel serverSocket = ServerSocketChannel.open();
-        serverSocket.bind(new InetSocketAddress(9000));
+        serverSocket.bind(new InetSocketAddress(9001));
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -26,8 +26,8 @@ public class SocketChannelServer {
                     if (next.channel() == serverSocket) {
                         SocketChannel client = serverSocket.accept();
                         client.configureBlocking(false);
-                        System.out.println("Connection Set: " + client.getRemoteAddress());
                         client.register(selector, SelectionKey.OP_READ);
+                        System.out.println("Connection Set: " + client.getRemoteAddress());
                     } else {
                         ((SocketChannel) next.channel()).read(buffer);
                         buffer.flip();

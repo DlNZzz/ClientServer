@@ -11,7 +11,7 @@ import java.nio.channels.SocketChannel;
 public class SocketChannelClient {
     public static void main(String[] args) throws IOException {
         SocketChannel server = SocketChannel.open();
-        SocketAddress socketAddr = new InetSocketAddress("localhost", 9000);
+        SocketAddress socketAddr = new InetSocketAddress("localhost", 9001);
         server.connect(socketAddr);
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

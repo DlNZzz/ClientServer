@@ -1,4 +1,4 @@
-package ru.dinz;
+package ru.dinz.version13;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;

@@ -1,4 +1,4 @@
-package ru.dinz;
+package ru.dinz.version2;
 
 public class Del {
     public static void main(String[] args) {
