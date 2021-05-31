@@ -35,7 +35,7 @@ public class ClientSomething {
             System.err.println("Socket failed");
         }
         readerSystemConsole = new BufferedReader(new InputStreamReader(System.in));
-        if (addAccountToServer()) {
+        if (true) {
             new ReadMessage().start();
             new WriteMessage().start();
         } else {
@@ -85,7 +85,7 @@ public class ClientSomething {
                 while (true)  {
                     server.read(buffer);
                     buffer.flip();
-                    System.out.println(new String(buffer.array(), buffer.position(), buffer.remaining()));
+                    System.out.println(new String(buffer.array()));
                 }
             } catch (IOException e) {
                 closeService();

@@ -12,7 +12,7 @@ public class Client {
 
     static {
         serverIp = "127.0.0.1";
-        serverPort = 4740;
+        serverPort = 8001;
         readerSystem = new BufferedReader(new InputStreamReader(System.in));
     }
 

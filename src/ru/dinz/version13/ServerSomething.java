@@ -63,7 +63,8 @@ class ServerSomething extends Thread {
                             SelectionKey next = selectionKeyIterator.next();
                             if (Objects.equals(Queue.getPriorityQueue().peek(), token)) {
                                 try {
-                                    ((SocketChannel) next.channel()).read(buffer);
+                                    int numRead = ((SocketChannel) next.channel()).read(buffer);
+
                                     buffer.flip();
                                     System.out.println(new String(buffer.array(), buffer.position(), buffer.remaining()));
                                     buffer.clear();

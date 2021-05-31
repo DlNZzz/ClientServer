@@ -22,10 +22,10 @@ public class SocketServer {
     }
 
     public static void main(String[] args) throws IOException {
-        new SocketServer("localhost", 8000).start();
+        new SocketServer("localhost", 8001).go();
     }
 
-    public void start() throws IOException {
+    public void go() throws IOException {
         this.selector = Selector.open();
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.bind(address);
