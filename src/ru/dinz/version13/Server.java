@@ -2,11 +2,6 @@ package ru.dinz.version13;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
@@ -27,22 +22,26 @@ public class Server {
      */
     public static List<ServerSomething> serverList = new ArrayList<>();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         new Server().go();
     }
 
-    public void go() throws IOException {
+    public void go() {
         System.out.println("Server Started");
-        serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.bind(new InetSocketAddress(PORT));
-        while (true) {
-            socketChannel = serverSocketChannel.accept();
-            System.out.println("Connection Set: " + socketChannel.getRemoteAddress());
-            System.out.println("IP is: " + ((InetSocketAddress)
-                    socketChannel.getRemoteAddress()).getAddress().toString().split("/")[1]);
-            System.out.println("PORT is: "
-                    + socketChannel.getRemoteAddress().toString().split(":")[1]);
-            serverList.add(new ServerSomething(socketChannel));
+        try {
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.bind(new InetSocketAddress(PORT));
+            while (true) {
+                socketChannel = serverSocketChannel.accept();
+                System.out.println("Connection Set: " + socketChannel.getRemoteAddress());
+                System.out.println("IP is: " + ((InetSocketAddress)
+                        socketChannel.getRemoteAddress()).getAddress().toString().split("/")[1]);
+                System.out.println("PORT is: "
+                        + socketChannel.getRemoteAddress().toString().split(":")[1]);
+                serverList.add(new ServerSomething(socketChannel));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -29,26 +29,6 @@ class ServerSomething extends Thread {
         start();
     }
 
-    private Account deserialization() {
-        Object o = null;
-        try {
-            client.read(buffer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        buffer.flip();
-        byte[] bytes = buffer.array();
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        try (ObjectInput objectInput = new ObjectInputStream(byteArrayInputStream)) {
-            o = objectInput.readObject();
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            buffer.clear();
-        }
-        return (Account) o;
-    }
-
     @Override
     public void run() {
         try {
@@ -60,6 +40,9 @@ class ServerSomething extends Thread {
         Token token = null;
         try {
             Account account = deserialization();
+            System.out.println("account" + account);
+            selector = Selector.open();
+            client.register(selector, SelectionKey.OP_READ);
             token = new Token(account);
             if (Queue.getMap().containsKey(token)) {
                 System.out.println(account);
@@ -67,10 +50,14 @@ class ServerSomething extends Thread {
                 String recordRelevance = "";
                 try {
                     while (true) {
+                        System.out.println(selector + " select51");
                         int select = selector.select();
+                        System.out.println(select);
+                        System.out.println(selector + " select53");
                         if (select == 0) {
                             continue;
                         }
+                        System.out.println("selector2");
                         Iterator<SelectionKey> selectionKeyIterator = selector.selectedKeys().iterator();
                         while (selectionKeyIterator.hasNext()) {
                             SelectionKey next = selectionKeyIterator.next();
@@ -87,7 +74,7 @@ class ServerSomething extends Thread {
                                 }
                             }
                         }
-/*
+                        /*
                         String message = "";
                         if (Objects.equals(Queue.getPriorityQueue().peek(), token)) {
                             recordRelevance = "Write";
@@ -131,6 +118,51 @@ class ServerSomething extends Thread {
         }
     }
 
+    private Account deserialization() {
+        while (true) {
+            int select = 0;
+            System.out.println(selector + " select");
+            try {
+                select = selector.select();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (select == 0) {
+                continue;
+            }
+            System.out.println("deser");
+            Object o = null;
+            try {
+                client.read(buffer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            buffer.flip();
+            byte[] bytes = buffer.array();
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+            try (ObjectInput objectInput = new ObjectInputStream(byteArrayInputStream)) {
+                o = objectInput.readObject();
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            } finally {
+                buffer.clear();
+                try {
+                    byteArrayInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("return");
+            try {
+                selector.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(selector + " select2");
+            return (Account) o;
+        }
+    }
+
     /**
      * отсылка одного сообщения клиенту по указанному потоку
      * @param msg
@@ -157,12 +189,7 @@ class ServerSomething extends Thread {
                 System.out.println(Queue.getPriorityQueue() + " 119");
             }
             if(client.isOpen()) {
-                //socket.close();
-                //writer.close();
-                //reader.close();
-                //inObject.close();
                 readerSystem.close();
-                //outObject.close();
                 for (ServerSomething serverSomething : Server.serverList) {
                     if(serverSomething.equals(this)) {
                         serverSomething.interrupt();
